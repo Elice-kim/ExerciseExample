@@ -1,6 +1,7 @@
 package com.example.elice.exercise.fragment;
 
 import android.content.Context;
+import android.net.Uri;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -37,9 +38,10 @@ public class PostAdapter extends RecyclerView.Adapter<PostViewHolder> {
     public void onBindViewHolder(PostViewHolder holder, int position) {
         Post.Channel.Item item = arrayList.get(position);
 
-        String url ="https://apis.daum.net/search/image?apikey=68bb419bdb007bd752defe7dfcddbd21&q=농구&output=json";
+        String url = item.getImage();
 
         Glide.with(mContext).load(url).into(holder.ivImg);
+        holder.ivImg.setImageURI(Uri.parse(item.getImage()));
         holder.ivPostText.setText(item.getTitle());
         holder.ivUserName.setText(item.getCpname());
         holder.ivLikeCount.setText(item.getHeight());

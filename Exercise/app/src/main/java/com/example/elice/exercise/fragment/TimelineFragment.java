@@ -46,6 +46,7 @@ public class TimelineFragment extends Fragment {
         View v = inflater.inflate(R.layout.fragment_timeline, container, false);
         arrayList = new ArrayList<>();
         RecyclerView rvList = (RecyclerView) v.findViewById(R.id.rv_list);
+//        rvList.getRecycledViewPool().setMaxRecycledViews(0, 0);
         postdapter = new PostAdapter(getActivity(), arrayList);
 
         rvList.setAdapter(postdapter);
@@ -68,10 +69,10 @@ public class TimelineFragment extends Fragment {
         FetchPostTask fetch = new FetchPostTask();
         fetch.execute(GET_POST);
     }
-    class FetchPostTask extends AsyncTask<String, Void, Post.Channel.Item[]> {
+    class FetchPostTask extends AsyncTask<String, Void, Post> {
 
         @Override
-        protected Post.Channel.Item[] doInBackground(String... params) {
+        protected Post doInBackground(String... params) {
 
             String url = params[0];
 
@@ -83,7 +84,7 @@ public class TimelineFragment extends Fragment {
                 Response response = client.newCall(request).execute();
 
                 Gson gson = new Gson();
-                Post.Channel.Item[] posts = gson.fromJson(response.body().charStream(), Post.Channel.Item[].class);
+                Post posts = gson.fromJson(response.body().charStream(), Post.class);
 
                 return posts;
 
@@ -94,13 +95,21 @@ public class TimelineFragment extends Fragment {
         }
 
         @Override
-        protected void onPostExecute(Post.Channel.Item[] items) {
-            super.onPostExecute(items);
-            for (Post.Channel.Item item : items) {
+        protected void onPostExecute(Post post) {
+            super.onPostExecute(post);
+            for (Post.Channel.Item item : post.channel.item){
                 arrayList.add(item);
             }
             postdapter.notifyDataSetChanged();
         }
+
+        //        @Override
+//        protected void onPostExecute(Post post) {
+//            super.onPostExecute(post);
+//            arrayList.addAll(post.channel.item);
+//            postdapter.notifyDataSetChanged();
+//        }
+
     }
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
